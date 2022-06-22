@@ -2,6 +2,10 @@ const { merge } = require('webpack-merge')
 const path = require('path')
 const TerserPlugin = require('terser-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+// css的treeShaking
+const PurgecssPlugin = require('purgecss-webpack-plugin')
+const glob = require('glob')
+
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const base = require('./webpack.common')
 
@@ -28,9 +32,15 @@ module.exports = merge(base, {
   plugins: [
     new MiniCssExtractPlugin({
       filename: 'css/[name].[contenthash].css'
+    }),
+    // 开启css的tree-shaking
+    new PurgecssPlugin({
+      paths: glob.sync(`${path.join(__dirname, 'src')}/**/*`, { nodir: true })
     })
   ],
   optimization: {
+    // usedExports 依赖于 terser 去检测语句中的副作用
+    usedExports: true,
     // 代码的压缩
     minimize: true,
     //js的压缩、css的压缩

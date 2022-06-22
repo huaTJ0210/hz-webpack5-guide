@@ -12,10 +12,17 @@ npx webpack --env goal=local --env production --progress
 }
 */
 
+
+/*
+  预编译资源模块 DLLPlugin
+
+  将项目中基础模块（不发生变动的）通过DLLPlugin进行配置
+*/
+
 module.exports = {
   entry: {
-    index: './src/index.js',
-    main: './src/main.js'
+    index: './src/index.js'
+    // main: './src/main.js'
   },
   resolve: {
     // 主要配置webpack的一些解析规则
@@ -46,18 +53,22 @@ module.exports = {
       },
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
-        type: 'asset/resource'
+        type: 'asset',
+        parser: {
+          dataUrlCondition: {
+            maxSize: 4 * 1024 // 4kb 通过修改此选项决定资源是否通过base64的方式引入（asset/inline）
+          }
+        }
       }
     ]
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'webpack'
+      title: 'webpack',
+      template: 'index.html'
     })
   ],
   optimization: {
-    // usedExports 依赖于 terser 去检测语句中的副作用
-    // usedExports: true,
     // 避免模块改动导致不相关的模块hash值发生改变
     moduleIds: 'deterministic',
     // 代码分割，提取公共模块，避免同一个包被打入到多个bundle中

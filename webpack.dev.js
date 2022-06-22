@@ -2,6 +2,9 @@ const { merge } = require('webpack-merge')
 const base = require('./webpack.common')
 const path = require('path')
 
+// 检测出项目中不再使用的module
+const UnusedWebpackPlugin = require('unused-webpack-plugin')
+
 module.exports = merge(base, {
   mode: 'development',
   // webpack如何向磁盘写入文件
@@ -24,5 +27,11 @@ module.exports = merge(base, {
   },
   devServer: {
     static: './dist'
-  }
+  },
+  plugins: [
+    new UnusedWebpackPlugin({
+      directories: [path.join(__dirname, 'src')],
+      root: path.join(__dirname, '../')
+    })
+  ]
 })

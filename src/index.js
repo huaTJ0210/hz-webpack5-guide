@@ -7,3 +7,9 @@ const res = _.join(['li', 'wang'])
 console.log(res)
 
 home()
+
+Promise(resolve => {
+  setTimeout(() => {
+    resolve()
+  }, 2000)
+})
